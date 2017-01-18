@@ -1,1 +1,2 @@
+pygit2
 Cython==0.25.2
