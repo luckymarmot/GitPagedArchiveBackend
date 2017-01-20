@@ -15,14 +15,69 @@ from pygit2 import Repository as PyGit2Repo
 cdef extern from "git2.h":
     pass
 
+cdef extern from "git2/oid.h":
+    ctypedef struct git_oid:
+        pass
+
+
+
 cdef extern from 'git2/odb.h':
     ctypedef struct git_odb:
         pass
 
+cdef extern from "git2/types.h":
+    ctypedef enum git_otype:
+        GIT_OBJ_ANY = -2		#/**< Object can be any of the following */
+        GIT_OBJ_BAD = -1		#/**< Object is invalid. */
+        GIT_OBJ__EXT1 = 0		#/**< Reserved for future use. */
+        GIT_OBJ_COMMIT = 1		#/**< A commit object. */
+        GIT_OBJ_TREE = 2		#/**< A tree (directory listing) object. */
+        GIT_OBJ_BLOB = 3		#/**< A file revision object. */
+        GIT_OBJ_TAG = 4		    #/**< An annotated tag object. */
+        GIT_OBJ__EXT2 = 5		#/**< Reserved for future use. */
+        GIT_OBJ_OFS_DELTA = 6   #/**< A delta, base is given by an offset. */
+        GIT_OBJ_REF_DELTA = 7   # 3/**< A delta, base is given by object id. */
+
+
 cdef extern from "git2/odb_backend.h":
+    ctypedef struct git_odb_stream:
+        pass
+
     ctypedef struct git_odb_backend:
         unsigned int version
         git_odb *odb
+        int (* read)(void **, size_t *, git_otype *, git_odb_backend *, const git_oid *)
+
+        # To find a unique object given a prefix of its oid.  The oid given
+        # must be so that the remaining (GIT_OID_HEXSZ - len)*4 bits are 0s.
+
+        int (* read_prefix)(
+            git_oid *, void **, size_t *, git_otype *,
+            git_odb_backend *, const git_oid *, size_t)
+
+        int (* read_header)(
+            size_t *, git_otype *, git_odb_backend *, const git_oid *);
+
+         # Write an object into the backend. The id of the object has
+         # already been calculated and is passed in.
+
+        int (* write)(
+            git_odb_backend *, const git_oid *, const void *, size_t, git_otype);
+
+        int (* writestream)(
+            git_odb_stream **, git_odb_backend *, git_off_t, git_otype);
+
+        int (* readstream)(
+            git_odb_stream **, git_odb_backend *, const git_oid *);
+
+        int (* exists)(
+            git_odb_backend *, const git_oid *);
+
+        int (* exists_prefix)(
+            git_oid *, git_odb_backend *, const git_oid *, size_t);
+
+        int (* refresh)(git_odb_backend *);
+
         pass
 
 cdef extern from "git2/refdb.h":
