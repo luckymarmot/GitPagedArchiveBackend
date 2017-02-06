@@ -117,8 +117,18 @@ cdef extern from 'Archive.h':
                                          const char* filename);
 
 
-    cdef Errors Archive_save(const Archive*           self,
-                            ArchiveSaveResult*       result);
+    Errors Archive_save(const Archive*           self,
+                        ArchiveSaveResult*       result);
+
+    Errors Archive_get(const Archive*            self,
+                       const char*               key,
+                       char**                    _data,
+                       size_t*                   _data_size);
+
+    Errors      Archive_set(Archive*              self,
+                        const char*               key,
+                        const char*               data,
+                        size_t                    size);
 
 
 cdef class ArchiveBackend:
@@ -149,9 +159,50 @@ cdef class ArchiveBackend:
         raise_on_error(Archive_save(&self.archive, &files.results))
         return files.to_list(changed_only=changed_only)
 
+    def has(self, str key):
+        py_byte_string = key.encode('UTF-8')
+        if len(py_byte_string) != 20:
+            raise KeyError('Key must be 20 chars')
+        cdef char* b_key = py_byte_string
+        return Archive_has(&self.archive, key=b_key)
+
+    def __contains__(self, str key):
+        return self.has(key)
+
+    cpdef bytes get(self, str key):
+        py_byte_string = key.encode('UTF-8')
+        if len(py_byte_string) != 20:
+            raise KeyError('Key must be 20 chars')
+        cdef char* b_key = py_byte_string
+        cdef char* data = NULL
+        cdef size_t size = 0
+        raise_on_error(
+            Archive_get(&self.archive, key=b_key, _data=&data, _data_size=&size)
+        )
+        cdef bytes py_string = data[:size]
+        return py_string
+
+    def __getitem__(self, str key):
+        return self.get(key=key)
+
+    def set(self, str key, bytes data):
+        py_byte_string = key.encode('UTF-8')
+        if len(py_byte_string) != 20:
+            raise KeyError('Key must be 20 chars')
+        cdef char* b_key = py_byte_string
+        cdef char* _data = data
+        raise_on_error(
+            Archive_set(&self.archive, b_key, _data, len(data))
+        )
+
+    def __setitem__(self, str key, bytes data):
+        self.set(key=key, data=data)
+
+
 
 
     def _add_empty_page(self):
+
         raise_on_error(
             Archive_add_empty_page(&self.archive)
         )
