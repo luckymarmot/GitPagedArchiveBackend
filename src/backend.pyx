@@ -4,6 +4,7 @@
 #include <git2/refdb.h>
 #include <git2/sys/refdb_backend.h>
 #include <git2/sys/repository.h>
+from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
 
 from pygit2 import Repository as PyGit2Repo
 
@@ -11,6 +12,44 @@ from pygit2 import Repository as PyGit2Repo
 # https://github.com/jmorse/pygit2-backends/blob/master/pygit2_backends/
 # repository.py
 # https://github.com/jmorse/pygit2-backends/blob/master/src/pygit2_backends.c
+
+
+cdef extern from 'Errors.h':
+    ctypedef enum Errors:
+        E_SUCCESS                       = 0
+        E_SYSTEM_ERROR_ERRNO            = -1
+        E_INDEX_MAX_SIZE_EXCEEDED       = -2
+        E_INDEX_OUT_OF_BOUNDS           = -3
+        E_FILE_READ_ERROR               = -4
+        E_NOT_FOUND                     = -5
+        E_UNKNOWN_ARCHIVE_VERSION       = -6
+        E_INVALID_ARCHIVE_HEADER        = -7
+
+
+cdef extern from 'ArchiveSaveResult.h':
+    ctypedef struct ArchiveSaveResult:
+        pass
+
+
+cdef extern from 'Archive.h':
+    ctypedef struct Archive:
+        pass
+    cdef void Archive_init(Archive* archive,
+                      const char* base_file_path)
+
+    cdef void Archive_free(Archive* archive)
+
+    cdef bint Archive_has(const Archive* archive,
+                          const char* key)
+
+    cdef Errors Archive_add_empty_page(Archive* archive)
+
+    cdef Errors Archive_add_page_by_name(Archive* archive,
+                                         const char* filename);
+
+    cdef Errors Archive_save(const Archive*           self,
+                            ArchiveSaveResult*       result);
+
 
 cdef extern from "git2.h":
     pass
@@ -126,10 +165,42 @@ supported_repo_attrs = [
 ]
 
 
+
+
 class CustomBackend:
+
+
     def __init__(self):
-        self._c_struct = None
+        #self._c_struct = git_odb_backend(
+        #    read = self.read
+        #)
         pass
+
+cdef class ArchiveBackend:
+    cdef Archive* archive
+
+    def __cinit__(self):
+        self.archive = <Archive*> PyMem_Malloc(sizeof(Archive))
+        if not self.archive:
+            raise MemoryError()
+
+    def __dealloc__(self):
+        PyMem_Free(self.archive)
+
+    def __init__(self, str root_file_path, list pages):
+        Archive_init(archive=self.archive, base_file_path=root_file_path)
+        for page in pages:
+            self._add_page(page)
+
+    cpdef void _add_page(self, str filename):
+        error = Archive_add_page_by_name(archive=self.archive, filename=filename)
+        if error == Errors.E_SUCCESS:
+            return
+
+
+
+
+
 
 
 class MysqlRepository(PyGit2Repo):

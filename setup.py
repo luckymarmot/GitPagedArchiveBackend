@@ -10,7 +10,7 @@ ex = Extension(
     '*', ['./src/*.pyx'],
     cython_c_in_temp=True,
     libraries=['git2'],
-    include_dirs=[libgit2_include],
+    include_dirs=[libgit2_include, './src/ArchiveLib/archive'],
     library_dirs=[libgit2_lib]
 )
 
