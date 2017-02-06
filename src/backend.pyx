@@ -1,5 +1,4 @@
 print("Hello")
-from libc.stdlib cimport malloc, free
 
 
 # https://github.com/jmorse/pygit2/commit/6edb77f5
@@ -74,8 +73,35 @@ def raise_on_error(Errors error):
 
 
 cdef extern from 'ArchiveSaveResult.h':
+    ctypedef struct ArchiveSaveFile:
+        char* filename
+        bint  has_changes
+
     ctypedef struct ArchiveSaveResult:
+        ArchiveSaveFile* files
+        size_t           count
+
+    inline void ArchiveSaveResult_free(ArchiveSaveResult* result)
+
+
+cdef class ArchiveFiles:
+    cdef ArchiveSaveResult results
+
+    def __init__(self):
         pass
+
+    def to_list(self, changed_only=True):
+        files = []
+        cdef ArchiveSaveFile file
+        cdef int i;
+        for i in range(0, self.results.count):
+            file = self.results.files[i]
+            if changed_only:
+                if file.has_changes:
+                    files.append(file.filename)
+            else:
+                files.append(file.filename)
+        return files
 
 
 cdef extern from 'Archive.h':
@@ -101,7 +127,6 @@ cdef extern from 'Archive.h':
                             ArchiveSaveResult*       result);
 
 
-
 cdef class ArchiveBackend:
     cdef Archive archive
 
@@ -112,6 +137,9 @@ cdef class ArchiveBackend:
         for page in pages:
             self._add_page(page)
 
+        if len(pages) == 0:
+            self._add_empty_page()
+
     def get_archive(self):
         return <int>&self.archive
 
@@ -121,4 +149,17 @@ cdef class ArchiveBackend:
         raise_on_error(
             Archive_add_page_by_name(archive=&self.archive, filename=file_path)
         )
+
+    def save(self, changed_only=True):
+        files = ArchiveFiles()
+        raise_on_error(Archive_save(&self.archive, &files.results))
+        return files.to_list(changed_only=changed_only)
+
+    def _add_empty_page(self):
+        raise_on_error(
+            Archive_add_empty_page(&self.archive)
+        )
+
+
+
 
