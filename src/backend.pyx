@@ -37,7 +37,7 @@ class ArchiveLibInvalidArchiveHeaderError(IOError):
     pass
 
 def raise_on_error(Errors error):
-    if error >= 0:
+    if error == E_SUCCESS:
         return
     if error == E_SYSTEM_ERROR_ERRNO:
         PyErr_SetFromErrno(PyExc_IOError)
