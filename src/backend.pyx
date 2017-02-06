@@ -1,12 +1,3 @@
-print("Hello")
-
-
-# https://github.com/jmorse/pygit2/commit/6edb77f5
-# https://github.com/jmorse/pygit2-backends/blob/master/pygit2_backends/
-# repository.py
-# https://github.com/jmorse/pygit2-backends/blob/master/src/pygit2_backends.c
-
-
 cdef extern from "Python.h":
     ctypedef struct PyObject
     cdef PyObject *PyExc_IOError
@@ -103,6 +94,9 @@ cdef class ArchiveFiles:
                 files.append(file.filename)
         return files
 
+    def __dealloc__(self):
+        ArchiveSaveResult_free(&self.results)
+
 
 cdef extern from 'Archive.h':
     ctypedef struct Archive:
@@ -155,11 +149,12 @@ cdef class ArchiveBackend:
         raise_on_error(Archive_save(&self.archive, &files.results))
         return files.to_list(changed_only=changed_only)
 
+
+
     def _add_empty_page(self):
         raise_on_error(
             Archive_add_empty_page(&self.archive)
         )
 
-
-
-
+    def __dealloc__(self):
+        Archive_free(&self.archive)
