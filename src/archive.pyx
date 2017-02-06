@@ -198,9 +198,6 @@ cdef class ArchiveBackend:
     def __setitem__(self, str key, bytes data):
         self.set(key=key, data=data)
 
-
-
-
     def _add_empty_page(self):
 
         raise_on_error(

@@ -9,12 +9,12 @@ libgit2_bin, libgit2_include, libgit2_lib = get_libgit2_paths()
 
 
 ex = Extension(
-    'backend',
-    sources= ['./src/backend.pyx',
+    'archive',
+    sources= ['./src/archive.pyx',
               './src/ArchiveLib/archive/Archive.c',
-            './src/ArchiveLib/archive/ArchivePage.c',
-            './src/ArchiveLib/archive/HashIndex.c',
-            './src/ArchiveLib/archive/HashIndexPack.c'],
+              './src/ArchiveLib/archive/ArchivePage.c',
+              './src/ArchiveLib/archive/HashIndex.c',
+              './src/ArchiveLib/archive/HashIndexPack.c'],
     cython_c_in_temp=True,
     libraries=['git2'],
     include_dirs=[libgit2_include, './src/ArchiveLib/archive'],
