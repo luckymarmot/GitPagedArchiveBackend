@@ -1,0 +1,7 @@
+/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/CMakeFiles/git2-archive.dir
+/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/CMakeFiles/edit_cache.dir
+/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/CMakeFiles/rebuild_cache.dir
+/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/CMakeFiles/ArchiveLib.dir
+/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/CMakeFiles/Archive.dir

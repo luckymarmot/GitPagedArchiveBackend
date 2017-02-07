@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="LIBGIT2-archive"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="clang"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\CMAKE\;CMake Files\ArchiveLib\;CMake Files\ArchiveLib\archive\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="git2-archive">
+				<Option output="/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/libgit2-archive.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 git2-archive"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="git2-archive/fast">
+				<Option output="/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/libgit2-archive.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 git2-archive/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ArchiveLib">
+				<Option output="/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/ArchiveLib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/Makefile&quot;  VERBOSE=1 ArchiveLib"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ArchiveLib/fast">
+				<Option output="/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/ArchiveLib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/Makefile&quot;  VERBOSE=1 ArchiveLib/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Archive">
+				<Option output="/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/libArchive.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/Makefile&quot;  VERBOSE=1 Archive"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Archive/fast">
+				<Option output="/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/libArchive.dylib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/Makefile&quot;  VERBOSE=1 Archive/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/matthaus/work/GitPagedArchiveBackend/src/cmake-build-debug/ArchiveLib/archive/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive/Archive.c">
+			<Option target="Archive"/>
+		</Unit>
+		<Unit filename="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive/Archive.h">
+			<Option target="Archive"/>
+		</Unit>
+		<Unit filename="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive/ArchivePage.c">
+			<Option target="Archive"/>
+		</Unit>
+		<Unit filename="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive/ArchivePage.h">
+			<Option target="Archive"/>
+		</Unit>
+		<Unit filename="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive/ArchiveSaveResult.h">
+			<Option target="Archive"/>
+		</Unit>
+		<Unit filename="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive/Endian.h">
+			<Option target="Archive"/>
+		</Unit>
+		<Unit filename="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive/Errors.h">
+			<Option target="Archive"/>
+		</Unit>
+		<Unit filename="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive/HashIndex.c">
+			<Option target="Archive"/>
+		</Unit>
+		<Unit filename="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive/HashIndex.h">
+			<Option target="Archive"/>
+		</Unit>
+		<Unit filename="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive/HashIndexPack.c">
+			<Option target="Archive"/>
+		</Unit>
+		<Unit filename="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive/HashIndexPack.h">
+			<Option target="Archive"/>
+		</Unit>
+		<Unit filename="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive/main.c">
+			<Option target="ArchiveLib"/>
+		</Unit>
+		<Unit filename="/Users/matthaus/work/GitPagedArchiveBackend/src/gitbackend.c">
+			<Option target="git2-archive"/>
+		</Unit>
+		<Unit filename="/Users/matthaus/work/GitPagedArchiveBackend/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/Users/matthaus/work/GitPagedArchiveBackend/src/../CMAKE/Findlibgit2.cmake">
+			<Option virtualFolder="CMake Files\..\CMAKE\"/>
+		</Unit>
+		<Unit filename="/Users/matthaus/work/GitPagedArchiveBackend/src/ArchiveLib/archive/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ArchiveLib\archive\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
