@@ -26,6 +26,7 @@
 #include <git2/errors.h>
 #include <git2/types.h>
 #include <git2/indexer.h>
+#include <git2/repository.h>
 #include "Archive.h"
 #include "Errors.h"
 
@@ -287,4 +288,19 @@ int git_odb_backend_archive_open(git_odb_backend **odb_out,
     odb_backend->parent.free = &git_odb_backend_archive_free;
     *odb_out = (git_odb_backend *)odb_backend;
     return GIT_OK;
+}
+
+
+int init_repo(git_repository** repo, char* path) {
+	int er =  git_repository_open(repo, path);
+    return er;
+}
+
+
+int main()
+{
+    git_repository* repo;
+    char path[] = "/tmp/testrepo";
+    int er = init_repo(&repo, path);
+    return 0;
 }

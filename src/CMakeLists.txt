@@ -17,5 +17,5 @@ ENDIF ()
 # Compile and link LIBGIT2
 INCLUDE_DIRECTORIES(${LIBGIT2_INCLUDE_DIRS} ArchiveLib/archive)
 add_subdirectory(ArchiveLib/archive)
-ADD_LIBRARY(git2-archive gitbackend.c)
+add_executable(git2-archive gitbackend.c)
 TARGET_LINK_LIBRARIES(git2-archive ${LIBGIT2_LIBRARIES} Archive)

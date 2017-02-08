@@ -276,3 +276,4 @@ fabric.properties
 .Trash-*
 .idea
 /src/archive.c
+*/cmake-build-debug
