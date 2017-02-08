@@ -1,5 +1,6 @@
 from cpython.pycapsule cimport PyCapsule_New, PyCapsule_Destructor, \
    PyCapsule_GetPointer
+from pygit2.repository import BaseRepository
 
 cdef extern from "Python.h":
     ctypedef struct PyObject
@@ -200,9 +201,7 @@ cdef class PagedArchive:
         )
 
     def __dealloc__(self):
-        print("__dealloc__ Archive")
         Archive_free(&self.archive)
-        print("__dealloc__ed Archive")
 
 
 cdef extern from 'git2/repository.h':
@@ -217,14 +216,15 @@ cdef extern from 'gitbackend.h':
 
 # Destructor for cleaning up Point objects
 cdef del_Backend(object obj):
-    print("del_Backend!")
-    pt = <git_repository *> PyCapsule_GetPointer(obj,"backend")
-    #git_repository_free(pt)
-    print("delled!")
+    """
+    We do not do any clean up here since python gc cleans this up from
+    elsewhere
+    """
+    pass
 
 
 
-class Backend:
+class _Backend:
     def __init__(self, PagedArchive archive, str path):
         self.backend = self.build_backend(archive=archive, str_path=path)
         self.archive = archive
@@ -247,9 +247,23 @@ class Backend:
         return PyCapsule_New(
             <void*> repository, "backend", <PyCapsule_Destructor>del_Backend)
 
-    def __del__(self):
-        print("dell backend")
 
 
-    def __dealloc__(self):
-        print("__dealloc__ backend")
+class ArchiveRepository(BaseRepository):
+    def __init__(self,
+                 str repo_path,
+                 PagedArchive archive,
+                 *args, **kwargs):
+        self.__archive = archive
+        self.__repo_path = repo_path
+        self.__backend = _Backend(self.__archive, repo_path)
+        super().__init__(backend=self.__backend.backend, *args, **kwargs)
+
+    @classmethod
+    def from_path(cls, str repo_path, str root_path, list layers):
+        archive = PagedArchive(root_path, layers)
+        return cls(repo_path, archive)
+
+    @property
+    def backend_archive(self):
+        return self.__archive

@@ -2,7 +2,7 @@ from unittest import TestCase
 from pygit2.repository import BaseRepository
 from pygit2 import GIT_FILEMODE_BLOB
 
-from paged_archive import PagedArchive, Backend
+from paged_archive import ArchiveRepository
 
 
 class TestInit(TestCase):
@@ -10,10 +10,8 @@ class TestInit(TestCase):
         print("pre archive init")
         print("archive inited")
 
-        archive = PagedArchive("./data/", [])
-        backend = Backend(archive, "/tmp/testrepo")
-        repo = BaseRepository(backend=backend.backend)
-
+        repo = ArchiveRepository.from_path("/tmp/testrepo", "./data/", [])
+        archive = repo.backend_archive
         print("backend online")
 
 
