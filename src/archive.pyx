@@ -132,8 +132,6 @@ cdef extern from 'Archive.h':
 
 
 cdef class ArchiveBackend:
-    cdef Archive archive
-
     def __init__(self, str root_file_path, list pages):
         py_byte_string = root_file_path.encode('UTF-8')
         cdef char* file_path = py_byte_string

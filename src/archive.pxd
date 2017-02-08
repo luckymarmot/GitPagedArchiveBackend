@@ -5,3 +5,5 @@ cdef extern from 'Archive.h':
 
 cdef class ArchiveBackend:
     cdef Archive archive
+
+    cpdef bytes get(self, str key)

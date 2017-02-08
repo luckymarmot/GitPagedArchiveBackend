@@ -23,6 +23,7 @@
 #include <git2/sys/odb_backend.h>
 #include <git2/sys/refdb_backend.h>
 #include <git2/sys/refs.h>
+#include <git2/sys/repository.h>
 #include <git2/errors.h>
 #include <git2/types.h>
 #include <git2/indexer.h>
@@ -291,9 +292,36 @@ int git_odb_backend_archive_open(git_odb_backend **odb_out,
 }
 
 
-int init_repo(git_repository** repo, char* path) {
-	int er =  git_repository_open(repo, path);
+int attach_archive_to_repo(git_repository* repo, Archive* archive) {
+    git_odb_backend* odb_backend = NULL;
+
+    int er = git_odb_backend_archive_open(&odb_backend, archive);
+    if (er < 0) {
+        return er;
+    }
+    git_odb *odb = NULL;
+    er = git_odb_new(&odb);
+    if (er < 0) {
+        return er;
+    }
+    er = git_odb_add_backend(odb, odb_backend, 0);
+    if (er < 0) {
+        return er;
+    }
+
+    git_repository_set_odb(repo, odb);
+
+    git_odb_free(odb);
     return er;
+}
+
+
+int init_repo(git_repository** repo, char* path, Archive* archive) {
+	int er = git_repository_open(repo, path);
+    if (er < 0) {
+        return er;
+    }
+    return attach_archive_to_repo(*repo, archive);
 }
 
 
@@ -301,6 +329,10 @@ int main()
 {
     git_repository* repo;
     char path[] = "/tmp/testrepo";
-    int er = init_repo(&repo, path);
+    char apath[] = "./";
+
+    Archive archive;
+    Archive_init(&archive, "./");
+    int er = init_repo(&repo, path, &archive);
     return 0;
 }

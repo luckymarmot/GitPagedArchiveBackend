@@ -1,78 +1,44 @@
-# const char *host, *user, *passwd, *sql_db, *unix_socket;
-# git_odb_backend *odb_backend = NULL;
-# git_refdb_backend *refdb_backend = NULL;
-# git_odb *odb = NULL;
-# git_refdb *refdb = NULL;
-# git_repository *repository = NULL;
-# int portno, ret = GIT_OK;
-#
-# if (!PyArg_ParseTuple(args, "ssssiz", &host, &user, &passwd, &sql_db,
-#           &portno, &unix_socket))
-# return NULL;
-#
-# /* XXX -- allow for connection options such as compression and SSL */
-# ret = git_odb_backend_mysql_open(&odb_backend, &refdb_backend, host, user,
-#             passwd, sql_db, portno, unix_socket, 0);
-# if (ret == GIT_ENOTFOUND) {
-# PyErr_Format(PyExc_Exception, "No git db found in specified database");
-# return NULL;
-# } else if (ret < 0) {
-# /* An error occurred -- XXX however there's currently no facility for
-#  * identifying what error that is and telling the user about it, which is
-#  * poor. For now, just raise a generic error */
-# PyErr_Format(PyExc_Exception, "Failed to connect to mysql server");
-# return NULL;
-# }
-#
-# /* We have successfully created a custom backend. Now, create an odb around
-# * it, and then wrap it in a repository. */
-# ret = git_odb_new(&odb);
-# if (ret != GIT_OK)
-# goto cleanup;
-#
-# ret = git_odb_add_backend(odb, odb_backend, 0);
-# if (ret != GIT_OK)
-# goto cleanup;
-#
-# ret = git_repository_wrap_odb(&repository, odb);
-# if (ret != GIT_OK)
-# goto cleanup;
-#
-# /* Create a new reference database obj, add our custom backend, shoehorn into
-# * repository */
-# ret = git_refdb_new(&refdb, repository);
-# if (ret != GIT_OK)
-# goto cleanup;
-#
-# ret = git_refdb_set_backend(refdb, refdb_backend);
-# if (ret != GIT_OK)
-# goto cleanup;
-#
-# /* Can't fail */
-# git_repository_set_refdb(repository, refdb);
-#
-# /* Decrease reference count on both refdb and odb backends -- they'll be
-# * kept alive, but only by one reference, held by the repository */
-# git_refdb_free(refdb);
-# git_odb_free(odb);
-#
-# /* On success, return a PyCapsule containing the created repo.
-# * No destructor, manual deallocation occurs */
-
-from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
+from cpython.pycapsule cimport PyCapsule_New, PyCapsule_Destructor, PyCapsule_GetPointer
 from archive cimport ArchiveBackend
 
+cdef extern from 'Archive.h':
+    ctypedef struct Archive
+
+cdef extern from 'git2/repository.h':
+    ctypedef struct git_repository
+    int git_repository_open(git_repository** repo_out, const char* path)
+    void git_repository_free(git_repository* repo)
+
+cdef extern from 'gitbackend.h':
+    int init_repo(git_repository* repo, Archive* archive)
+
+
+# Destructor for cleaning up Point objects
+cdef del_Backend(object obj):
+    pt = <git_repository *> PyCapsule_GetPointer(obj,"backend")
+    git_repository_free(pt)
 
 
 cdef class Backend:
-    def __init__(self, ArchiveBackend archive):
-        self.backend = PyCapsule_New(*archive.archive, 'backend', NULL)
+    def __init__(self, ArchiveBackend archive, str path):
+        self.backend = self.build_backend(archive=archive, str_path=path)
 
-    def build_backend(self, ArchiveBackend archive, str path):
+    def build_backend(self, ArchiveBackend archive, str str_path):
+        py_byte_string = str_path.encode('UTF-8')
+        cdef const char* path = py_byte_string
+        cdef git_repository *repository = NULL;
 
-         cdef git_odb_backend *odb_backend = NULL;
-         cdef git_refdb_backend *refdb_backend = NULL;
-         cdef git_odb *odb = NULL;
-         cdef git_refdb *refdb = NULL;
-         cdef git_repository *repository = NULL;
-         cdef int portno, ret = GIT_OK;
+        cdef int err = git_repository_open(&repository, path)
+
+        if err < 0:
+            git_repository_free(repository)
+            raise Exception("could not open the repo error {}".format(err))
+
+        err = init_repo(repository, &archive.archive)
+
+        if err < 0:
+            git_repository_free(repository)
+            raise Exception("could not open the repo error {}".format(err))
+
+        return PyCapsule_New(
+            <void*> repository, "backend", <PyCapsule_Destructor>del_Backend)
