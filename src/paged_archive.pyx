@@ -1,3 +1,6 @@
+from cpython.pycapsule cimport PyCapsule_New, PyCapsule_Destructor, \
+   PyCapsule_GetPointer
+
 cdef extern from "Python.h":
     ctypedef struct PyObject
     cdef PyObject *PyExc_IOError
@@ -15,8 +18,6 @@ cdef extern from 'Errors.h':
         E_UNKNOWN_ARCHIVE_VERSION       = -6
         E_INVALID_ARCHIVE_HEADER        = -7
 
-
-
 class ArchiveLibIndexMaxSizeOverflowException(OverflowError):
     pass
 
@@ -28,7 +29,6 @@ class ArchiveLibFileReadError(IOError):
 
 class ArchiveLibItemNotFoundError(KeyError):
     pass
-
 
 class ArchiveLibUnknownArchiveVersionError(IOError):
     pass
@@ -60,7 +60,6 @@ def raise_on_error(Errors error):
 
     if error == E_INVALID_ARCHIVE_HEADER:
         raise ArchiveLibInvalidArchiveHeaderError()
-
 
 
 cdef extern from 'ArchiveSaveResult.h':
@@ -131,7 +130,8 @@ cdef extern from 'Archive.h':
                         size_t                    size);
 
 
-cdef class ArchiveBackend:
+cdef class PagedArchive:
+    cdef Archive archive
     def __init__(self, str root_file_path, list pages):
         py_byte_string = root_file_path.encode('UTF-8')
         cdef char* file_path = py_byte_string
@@ -157,21 +157,19 @@ cdef class ArchiveBackend:
         raise_on_error(Archive_save(&self.archive, &files.results))
         return files.to_list(changed_only=changed_only)
 
-    def has(self, str key):
-        py_byte_string = key.encode('UTF-8')
-        if len(py_byte_string) != 20:
+    def has(self, bytes key):
+        if len(key) != 20:
             raise KeyError('Key must be 20 chars')
-        cdef char* b_key = py_byte_string
+        cdef char* b_key = key
         return Archive_has(&self.archive, key=b_key)
 
-    def __contains__(self, str key):
+    def __contains__(self, bytes key):
         return self.has(key)
 
-    cpdef bytes get(self, str key):
-        py_byte_string = key.encode('UTF-8')
-        if len(py_byte_string) != 20:
+    cpdef bytes get(self, bytes key):
+        if len(key) != 20:
             raise KeyError('Key must be 20 chars')
-        cdef char* b_key = py_byte_string
+        cdef char* b_key = key
         cdef char* data = NULL
         cdef size_t size = 0
         raise_on_error(
@@ -180,20 +178,19 @@ cdef class ArchiveBackend:
         cdef bytes py_string = data[:size]
         return py_string
 
-    def __getitem__(self, str key):
+    def __getitem__(self, bytes key):
         return self.get(key=key)
 
-    def set(self, str key, bytes data):
-        py_byte_string = key.encode('UTF-8')
-        if len(py_byte_string) != 20:
+    def set(self, bytes key, bytes data):
+        if len(key) != 20:
             raise KeyError('Key must be 20 chars')
-        cdef char* b_key = py_byte_string
+        cdef char* b_key = key
         cdef char* _data = data
         raise_on_error(
             Archive_set(&self.archive, b_key, _data, len(data))
         )
 
-    def __setitem__(self, str key, bytes data):
+    def __setitem__(self, bytes key, bytes data):
         self.set(key=key, data=data)
 
     def _add_empty_page(self):
@@ -203,4 +200,56 @@ cdef class ArchiveBackend:
         )
 
     def __dealloc__(self):
+        print("__dealloc__ Archive")
         Archive_free(&self.archive)
+        print("__dealloc__ed Archive")
+
+
+cdef extern from 'git2/repository.h':
+    ctypedef struct git_repository
+    int git_repository_open(git_repository** repo_out, const char* path)
+    void git_repository_free(git_repository* repo)
+
+
+cdef extern from 'gitbackend.h':
+    int attach_archive_to_repo(git_repository* repo, Archive* archive);
+
+
+# Destructor for cleaning up Point objects
+cdef del_Backend(object obj):
+    print("del_Backend!")
+    pt = <git_repository *> PyCapsule_GetPointer(obj,"backend")
+    #git_repository_free(pt)
+    print("delled!")
+
+
+
+class Backend:
+    def __init__(self, PagedArchive archive, str path):
+        self.backend = self.build_backend(archive=archive, str_path=path)
+        self.archive = archive
+
+    def build_backend(self, PagedArchive archive, str str_path):
+        py_byte_string = str_path.encode('UTF-8')
+        cdef const char* path = py_byte_string
+        cdef git_repository *repository = NULL;
+        cdef int err = git_repository_open(&repository, path)
+        if err < 0:
+            git_repository_free(repository)
+            raise Exception("could not open the repo error {}".format(err))
+
+        err = attach_archive_to_repo(repository, &archive.archive)
+
+        if err < 0:
+            git_repository_free(repository)
+            raise Exception("could not open the repo error {}".format(err))
+
+        return PyCapsule_New(
+            <void*> repository, "backend", <PyCapsule_Destructor>del_Backend)
+
+    def __del__(self):
+        print("dell backend")
+
+
+    def __dealloc__(self):
+        print("__dealloc__ backend")

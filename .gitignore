@@ -275,5 +275,6 @@ fabric.properties
 # Linux trash folder which might appear on any partition or disk
 .Trash-*
 .idea
-/src/archive.c
+/src/paged_archive.c
 */cmake-build-debug
+tests/data
