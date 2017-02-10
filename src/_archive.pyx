@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from cpython.pycapsule cimport PyCapsule_New, PyCapsule_Destructor, \
    PyCapsule_GetPointer
 from pygit2.repository import BaseRepository
@@ -95,7 +97,7 @@ cdef class ArchiveFiles:
         return files
 
     def to_dict(self):
-        files = {}
+        files = OrderedDict()
         cdef bytes py_string
         cdef ArchiveSaveFile file
         cdef int i;
