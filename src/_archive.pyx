@@ -94,6 +94,17 @@ cdef class ArchiveFiles:
                 files.append(file.filename)
         return files
 
+    def to_dict(self):
+        files = {}
+        cdef bytes py_string
+        cdef ArchiveSaveFile file
+        cdef int i;
+        for i in range(0, self.results.count):
+            file = self.results.files[i]
+            py_string = file.filename
+            files[py_string.decode('utf-8')] = file.has_changes
+        return files
+
     def __dealloc__(self):
         ArchiveSaveResult_free(&self.results)
 
@@ -101,7 +112,6 @@ cdef class ArchiveFiles:
 cdef extern from 'Archive.h':
     ctypedef struct Archive:
         pass
-
 
     void Archive_init(Archive* self,
                            const char* base_file_path)
@@ -153,10 +163,10 @@ cdef class PagedArchive:
             Archive_add_page_by_name(archive=&self.archive, filename=file_path)
         )
 
-    def save(self, changed_only=True):
+    def save(self):
         files = ArchiveFiles()
         raise_on_error(Archive_save(&self.archive, &files.results))
-        return files.to_list(changed_only=changed_only)
+        return files.to_dict()
 
     def has(self, bytes key):
         if len(key) != 20:
