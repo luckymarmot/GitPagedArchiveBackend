@@ -120,7 +120,6 @@ static int archive_odb_backend__read_prefix(git_oid *output_oid, void **out_buf,
                                           size_t *out_len, git_otype *out_type, git_odb_backend *_backend,
                                           const git_oid *partial_oid, size_t oidlen)
 {
-	printf("archive_odb_backend__read_prefix\n");
     ArchiveODBBackend*  backend = (ArchiveODBBackend*) _backend;
     Archive* archvie = backend->archive;
 
@@ -175,10 +174,9 @@ static int archive_odb_backend__read(
         git_otype *type_p,
         git_odb_backend *_backend,
         const git_oid *oid) {
-	printf("archive_odb_backend__read\n");
+
     ArchiveODBBackend *backend = (ArchiveODBBackend *) _backend;
     Archive *archvie = backend->archive;
-
 
     char *data;
     size_t size;
@@ -212,10 +210,8 @@ static int archive_odb_backend__read(
 
 static int archive_odb_backend__exists(git_odb_backend *_backend, const git_oid *oid)
 {
-	printf("archive_odb_backend__exists\n");
     ArchiveODBBackend *backend = (ArchiveODBBackend *) _backend;
     Archive *archvie = backend->archive;
-
 
     bool found = Archive_has(
             archvie, (const char *) oid->id
@@ -224,7 +220,6 @@ static int archive_odb_backend__exists(git_odb_backend *_backend, const git_oid 
     if (found) {
         return 1;
     }
-    printf("archive_odb_backend__exists %d\n", found);
 
     return 0;
 }
@@ -234,10 +229,8 @@ static int archive_odb_backend__exists_prefix(git_oid * output_oid, git_odb_back
                                               size_t oidlen)
 
 {
-    printf("archive_odb_backend__exists_prefix\n");
     ArchiveODBBackend *backend = (ArchiveODBBackend *) _backend;
     Archive *archvie = backend->archive;
-
 
     bool found = Archive_has_partial(
             archvie,
@@ -249,15 +242,8 @@ static int archive_odb_backend__exists_prefix(git_oid * output_oid, git_odb_back
     if (found) {
         return 1;
     }
-    printf("archive_odb_backend__exists_prefix %d\n", found);
 
     return 0;
-}
-
-
-static int writestream(git_odb_stream ** stream, git_odb_backend * backend, git_off_t offset, git_otype type) {
-    printf("writestream\n");
-    return GIT_OK;
 }
 
 
@@ -268,7 +254,6 @@ static int archive_odb_backend__write(
         size_t len,
         git_otype type)
 {
-	printf("archive_odb_backend__write\n");
     ArchiveODBBackend *backend = (ArchiveODBBackend *) _backend;
     Archive *archvie = backend->archive;
 
@@ -300,19 +285,10 @@ void git_odb_backend_archive_free(git_odb_backend *backend)
     return;
 }
 
-int writepack(
-        git_odb_writepack ** pack, git_odb_backend * backend, git_odb *odb,
-        git_transfer_progress_cb progress_cb, void *progress_payload) {
-    printf("writepack\n");
-    return GIT_OK;
-}
-
 
 int git_odb_backend_archive_open(git_odb_backend **odb_out,
                                  Archive* archive)
 {
-	printf("git_odb_backend_archive_open\n");
-
     ArchiveODBBackend *odb_backend;
 
 
@@ -342,7 +318,6 @@ int git_odb_backend_archive_open(git_odb_backend **odb_out,
 
 
 int attach_archive_to_repo(git_repository* repo, Archive* archive) {
-	printf("attach_archive_to_repo\n");
 
     git_odb_backend* odb_backend = NULL;
 
