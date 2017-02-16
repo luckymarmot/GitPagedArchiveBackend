@@ -1,16 +1,22 @@
 from unittest import TestCase
 
-from pygit2 import GIT_FILEMODE_BLOB
+import shutil
+from pygit2 import GIT_FILEMODE_BLOB, Repository
 
 from paged_archive import ArchiveRepository
 
 
 class TestInit(TestCase):
+    def setUp(self):
+        shutil.rmtree('./data/repo')
+        repo = Repository('./data/repo')
+
+
     def test_init(self):
         print("pre archive init")
         print("archive inited")
 
-        repo = ArchiveRepository.from_path("/tmp/testrepo", "./data/", [])
+        repo = ArchiveRepository.from_path("/data/repo", "./data/", [])
         archive = repo.backend_archive
         print("backend online")
 
