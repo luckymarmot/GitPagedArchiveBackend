@@ -66,5 +66,20 @@ setup(
     url='https://github.com/luckymarmot/GitPagedArchiveBackend',
     maintainer='Matthaus Woolard',
     maintainer_email="matt@paw.cloud",
-    packages=['paged_archive']
+    author='Matthaus Woolard',
+    author_email='matt@paw.cloud',
+    packages=['paged_archive'],
+    license='MIT',
+    classifiers=[
+        'Development Status :: 5 - Development',
+
+        # Indicate who your project is intended for
+        'Intended Audience :: Developers',
+
+        'License :: OSI Approved :: MIT License',
+
+        'Programming Language :: Python :: 3.6',
+    ],
+    keywords='git',
+
 )
