@@ -75,7 +75,6 @@ static int archive_odb_backend__read_header(size_t *len_p,
                                             git_odb_backend *_backend,
                                             const git_oid *oid)
 {
-    printf("archive_odb_backend__read_header\n");
     ArchiveODBBackend*  backend = (ArchiveODBBackend*) _backend;
     Archive* archvie = backend->archive;
 
@@ -275,13 +274,11 @@ static int archive_odb_backend__write(
 
 static void archive_odb_backend__free(git_odb_backend *_backend)
 {
-	printf("archive_odb_backend__free\n");
 }
 
 
 void git_odb_backend_archive_free(git_odb_backend *backend)
 {
-	printf("git_odb_backend_archive_free\n");
     return;
 }
 
