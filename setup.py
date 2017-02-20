@@ -62,7 +62,7 @@ setup(
         'pygit2==0.25.0',
         'Cython==0.25.2'
     ],
-    version='0.0.dev4',
+    version='0.0.dev5',
     url='https://github.com/luckymarmot/GitPagedArchiveBackend',
     maintainer='Matthaus Woolard',
     maintainer_email="matt@paw.cloud",

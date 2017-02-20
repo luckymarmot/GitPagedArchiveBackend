@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from typing import List
 
 from cpython.pycapsule cimport PyCapsule_New, PyCapsule_Destructor, \
    PyCapsule_GetPointer
@@ -145,7 +146,16 @@ cdef extern from 'Archive.h':
 
 cdef class PagedArchive:
     cdef Archive archive
-    def __init__(self, str root_file_path, list pages):
+    def __init__(self, str root_file_path: str, list pages: str) -> None:
+        """
+        Create an archive
+        
+        
+        :param root_file_path: Project root, the root dir to all the pages
+        :type root_file_path: str
+        :param pages: List of paths to the layers in order (last is top layer)
+        :type pages: list
+        """
         py_byte_string = root_file_path.encode('UTF-8')
         cdef char* file_path = py_byte_string
         Archive_init(&self.archive, base_file_path=file_path)
@@ -155,33 +165,66 @@ cdef class PagedArchive:
         if len(pages) == 0:
             self._add_empty_page()
 
-    def get_archive(self):
-        return <int>&self.archive
-
-    def _add_page(self, str filename):
+    def _add_page(self, str filename: str) -> None:
+        """
+        Add a page to the end of the list of archive
+        
+        :param filename: The file path to the new page
+        :type filename: str
+        """
         py_byte_string = filename.encode('UTF-8')
         cdef char* file_path = py_byte_string
         raise_on_error(
             Archive_add_page_by_name(archive=&self.archive, filename=file_path)
         )
 
-    def save(self):
+    def save(self) -> dict:
+        """
+        Save any changes to disk and return a dict mapping layer name to bool
+        of indicating if there were changes to save.
+        
+        :return: dict of filenames mapping ot changes
+        """
         files = ArchiveFiles()
         raise_on_error(Archive_save(&self.archive, &files.results))
         return files.to_dict()
 
-    def has(self, bytes key):
+    def has(self, bytes key: bytes) -> bool:
+        """
+        Test if a given key is found in the archive
+        
+        :param key: 20 char key are raw bytes (not hex)
+        :type key: bytes
+        :return: True if in the pages False otherwise
+        :rtype: bool
+        """
         if len(key) != 20:
-            raise KeyError('Key must be 20 chars')
+            raise ValueError('Key must be 20 chars')
         cdef char* b_key = key
         return Archive_has(&self.archive, key=b_key)
 
-    def __contains__(self, bytes key):
+    def __contains__(self, bytes key: bytes) -> bool:
+        """
+        Check if key in 
+        
+        :param key: 20 char key are raw bytes (not hex)
+        :type key: bytes
+        :return: True if in the pages False otherwise
+        :rtype: bool
+        """
         return self.has(key)
 
     cpdef bytes get(self, bytes key):
+        """
+        Get the data for a key
+        
+        :param key: 20 char key are raw bytes (not hex)
+        :type key: bytes
+        :return: the data
+        :rtype: bool
+        """
         if len(key) != 20:
-            raise KeyError('Key must be 20 chars')
+            raise ValueError('Key must be 20 chars')
         cdef char* b_key = key
         cdef char* data = NULL
         cdef size_t size = 0
@@ -191,10 +234,26 @@ cdef class PagedArchive:
         cdef bytes py_string = data[:size]
         return py_string
 
-    def __getitem__(self, bytes key):
+    def __getitem__(self, bytes key: bytes) -> bytes:
+        """
+        Get the data for a key
+        
+        :param key: 20 char key are raw bytes (not hex)
+        :type key: bytes
+        :return: the data
+        :rtype: bool
+        """
         return self.get(key=key)
 
-    def set(self, bytes key, bytes data):
+    def set(self, bytes key: bytes, bytes data: bytes) -> None:
+        """
+        Set data for a given key
+        
+        :param key: 20 char key are raw bytes (not hex)
+        :type key: bytes
+        :param data: the data to set encoded in bytes
+        :type data: bytes
+        """
         if len(key) != 20:
             raise KeyError('Key must be 20 chars')
         cdef char* b_key = key
@@ -203,16 +262,29 @@ cdef class PagedArchive:
             Archive_set(&self.archive, b_key, _data, len(data))
         )
 
-    def __setitem__(self, bytes key, bytes data):
+    def __setitem__(self, bytes key: bytes, bytes data: bytes) -> None:
+        """
+        Set data for a given key
+        
+        :param key: 20 char key are raw bytes (not hex)
+        :type key: bytes
+        :param data: the data to set encoded in bytes
+        :type data: bytes
+        """
         self.set(key=key, data=data)
 
-    def _add_empty_page(self):
-
+    def _add_empty_page(self) -> None:
+        """
+        Init a new page to the archive
+        """
         raise_on_error(
             Archive_add_empty_page(&self.archive)
         )
 
     def __dealloc__(self):
+        """
+        Free the archive
+        """
         Archive_free(&self.archive)
 
 
@@ -237,11 +309,32 @@ cdef del_Backend(object obj):
 
 
 class _Backend:
-    def __init__(self, PagedArchive archive, str path):
+    def __init__(self,
+                 PagedArchive archive: PagedArchive,
+                 str path: str) -> None:
+        """
+        Create a backend object
+        
+        :param archive: Archive to be used for this backend
+        :type archive: PagedArchive
+        :param path: path to the refs for this git repo
+        :type path: str
+        """
         self.backend = self.build_backend(archive=archive, str_path=path)
         self.archive = archive
 
-    def build_backend(self, PagedArchive archive, str str_path):
+    def build_backend(self,
+                      PagedArchive archive: PagedArchive,
+                      str str_path: str) -> object:
+        """
+        
+        :param archive: Archive to be used for this backend
+        :type archive: PagedArchive
+        :param str_path: path to the refs for this git repo
+        :type str_path: str
+        :return: a python capsule of the pointer to the backend struct
+        :rtype: object
+        """
         py_byte_string = str_path.encode('UTF-8')
         cdef const char* path = py_byte_string
         cdef git_repository *repository = NULL;
@@ -263,19 +356,44 @@ class _Backend:
 
 class ArchiveRepository(BaseRepository):
     def __init__(self,
-                 str repo_path,
-                 PagedArchive archive,
+                 str repo_path: str,
+                 PagedArchive archive: PagedArchive,
                  *args, **kwargs):
+        """
+        Open a ArchiveRepository given a 
+        
+        :param repo_path: path to the refs for this repo
+        :type repo_path: str
+        :param archive: archive for this repo
+        :type archive: PagedArchive
+        """
         self.__archive = archive
         self.__repo_path = repo_path
         self.__backend = _Backend(self.__archive, repo_path)
         super().__init__(backend=self.__backend.backend, *args, **kwargs)
 
     @classmethod
-    def from_path(cls, str repo_path, str root_path, list layers):
+    def from_path(cls,
+                  str repo_path: str,
+                  str root_path: str,
+                  list layers: List[str]) -> 'ArchiveRepository':
+        """
+        Open a new repo based on a location
+        
+        :param repo_path: Path to the refs
+        :param root_path: Path to the layers
+        :param layers: List of paths to the layers relative `root_path`
+        :return: The new ArchiveRepository
+        :type: ArchiveRepository
+        """
         archive = PagedArchive(root_path, layers)
+
         return cls(repo_path, archive)
 
     @property
-    def backend_archive(self):
+    def backend_archive(self) -> PagedArchive:
+        """
+        :return: The archive for this repo
+        :rtype: PagedArchive
+        """
         return self.__archive
