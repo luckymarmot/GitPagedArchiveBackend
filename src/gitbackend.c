@@ -135,7 +135,6 @@ static int archive_odb_backend__read_prefix(git_oid *output_oid, void **out_buf,
             &size);
     if (e != E_SUCCESS)
     {
-        free(data);
         return convert_to_git_error(e);
     }
 
@@ -187,7 +186,6 @@ static int archive_odb_backend__read(
             &size);
 
     if (e != E_SUCCESS) {
-        free(data);
         return convert_to_git_error(e);
     }
 
@@ -329,6 +327,7 @@ int attach_archive_to_repo(git_repository* repo, Archive* archive) {
     }
     er = git_odb_add_backend(odb, odb_backend, 0);
     if (er < 0) {
+		git_odb_free(odb);
         return er;
     }
 
