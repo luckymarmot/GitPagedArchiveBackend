@@ -20,7 +20,7 @@ def ext_modules():
             './src/ArchiveLib/archive/HashIndexPack.c'
         ],
         cython_c_in_temp=True,
-        libraries=['git2'],
+        libraries=['git2', 'uuid'],
         include_dirs=[libgit2_include, './src/ArchiveLib/archive'],
         library_dirs=[libgit2_lib],
         extra_compile_args=['-std=c11'],
@@ -63,7 +63,7 @@ setup(
         'pygit2==0.25.0',
         'Cython==0.25.2'
     ],
-    version='0.0.dev9',
+    version='0.0.dev10',
     url='https://github.com/luckymarmot/GitPagedArchiveBackend',
     maintainer='Matthaus Woolard',
     maintainer_email="matt@paw.cloud",
@@ -72,7 +72,7 @@ setup(
     packages=['paged_archive'],
     license='MIT',
     classifiers=[
-        'Development Status :: 9 - Development',
+        'Development Status :: 10 - Development',
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
