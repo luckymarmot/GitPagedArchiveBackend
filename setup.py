@@ -63,7 +63,7 @@ setup(
         'pygit2==0.25.0',
         'Cython==0.25.2'
     ],
-    version='0.0.dev5',
+    version='0.0.dev6',
     url='https://github.com/luckymarmot/GitPagedArchiveBackend',
     maintainer='Matthaus Woolard',
     maintainer_email="matt@paw.cloud",
@@ -72,7 +72,7 @@ setup(
     packages=['paged_archive'],
     license='MIT',
     classifiers=[
-        'Development Status :: 5 - Development',
+        'Development Status :: 6 - Development',
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
