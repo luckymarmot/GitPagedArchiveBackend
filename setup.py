@@ -22,7 +22,8 @@ def ext_modules():
         cython_c_in_temp=True,
         libraries=['git2'],
         include_dirs=[libgit2_include, './src/ArchiveLib/archive'],
-        library_dirs=[libgit2_lib]
+        library_dirs=[libgit2_lib],
+        extra_compile_args=['-std=c11'],
     )
 
     extensions = [ex_archive, ]
