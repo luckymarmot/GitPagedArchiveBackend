@@ -1,5 +1,8 @@
 from collections import OrderedDict
+
+import _pygit2
 from typing import List
+from cpython.ref cimport PyObject
 
 from cpython.pycapsule cimport PyCapsule_New, PyCapsule_Destructor, \
    PyCapsule_GetPointer
@@ -296,6 +299,9 @@ cdef extern from 'git2/repository.h':
 
 cdef extern from 'gitbackend.h':
     int attach_archive_to_repo(git_repository* repo, Archive* archive);
+    int clone_object(PyObject* source_repo,
+                     PyObject* target_repo,
+                     const char* hex);
 
 
 # Destructor for cleaning up Point objects
@@ -386,6 +392,8 @@ class ArchiveRepository(BaseRepository):
         :return: The new ArchiveRepository
         :type: ArchiveRepository
         """
+        if not root_path.endswith('/'):
+            root_path += '/'
         archive = PagedArchive(root_path, layers)
 
         return cls(repo_path, archive)
@@ -397,3 +405,78 @@ class ArchiveRepository(BaseRepository):
         :rtype: PagedArchive
         """
         return self.__archive
+
+
+cdef extern from 'git2/errors.h':
+    ctypedef enum git_error_code:
+        GIT_OK         =  0 #,		/**< No error */
+
+        GIT_ERROR      = -1 #,		/**< Generic error */
+        GIT_ENOTFOUND  = -3 #,		/**< Requested object could not be found */
+        GIT_EEXISTS    = -4 #,		/**< Object exists preventing operation */
+        GIT_EAMBIGUOUS = -5 #,		/**< More than one object matches */
+        GIT_EBUFS      = -6 #,		/**< Output buffer too short to hold data */
+
+
+        GIT_EUSER      = -7 #,
+
+        GIT_EBAREREPO       =  -8#,	/**< Operation not allowed on bare repository */
+        GIT_EUNBORNBRANCH   =  -9#,	/**< HEAD refers to branch with no commits */
+        GIT_EUNMERGED       = -10#,	/**< Merge in progress prevented operation */
+        GIT_ENONFASTFORWARD = -11#,	/**< Reference was not fast-forwardable */
+        GIT_EINVALIDSPEC    = -12#,	/**< Name/ref spec was not in a valid format */
+        GIT_ECONFLICT       = -13#,	/**< Checkout conflicts prevented operation */
+        GIT_ELOCKED         = -14#,	/**< Lock file prevented operation */
+        GIT_EMODIFIED       = -15#,	/**< Reference value does not match expected */
+        GIT_EAUTH           = -16#,      /**< Authentication error */
+        GIT_ECERTIFICATE    = -17#,      /**< Server certificate is invalid */
+        GIT_EAPPLIED        = -18#,	/**< Patch/merge has already been applied */
+        GIT_EPEEL           = -19#,      /**< The requested peel operation is not possible */
+        GIT_EEOF            = -20#,      /**< Unexpected EOF */
+        GIT_EINVALID        = -21#,      /**< Invalid operation or input */
+        GIT_EUNCOMMITTED    = -22#,	/**< Uncommitted changes in index prevented operation */
+        GIT_EDIRECTORY      = -23#,      /**< The operation is not valid for a directory */
+        GIT_EMERGECONFLICT  = -24#,	/**< A merge conflict exists and cannot continue */
+
+        GIT_PASSTHROUGH     = -30#,	/**< Internal only */
+        GIT_ITEROVER        = -31#,	/**< Signals end of iteration with iterator */
+
+
+def git_error_to_py(git_error_code error):
+    if error == git_error_code.GIT_OK:
+        return None
+
+    if error == git_error_code.GIT_ERROR:
+        PyErr_SetFromErrno(PyExc_IOError)
+        return None
+
+    if error == git_error_code.GIT_ENOTFOUND:
+        raise KeyError()
+
+    raise _pygit2.GitError()
+
+
+
+
+cpdef clone_repo_object(source_repo: BaseRepository,
+                        target_repo: BaseRepository,
+                        str hex):
+    """
+    Copy odb object from one repo to the next.
+    """
+    py_byte_string = hex.encode('UTF-8')
+
+
+    cdef const char* char_hex = py_byte_string
+
+    cdef PyObject* source_repo_prt = <PyObject*>source_repo
+    cdef PyObject* target_repo_prt = <PyObject*>target_repo
+
+
+    cdef int error = clone_object(
+        source_repo_prt,
+        target_repo_prt,
+        char_hex
+    )
+
+    git_error_to_py(error)
