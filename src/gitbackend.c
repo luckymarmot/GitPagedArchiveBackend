@@ -345,3 +345,70 @@ int init_repo(git_repository** repo, char* path, Archive* archive) {
     }
     return attach_archive_to_repo(*repo, archive);
 }
+
+#include <Python.h>
+
+typedef struct CRepository {
+    PyObject_HEAD
+    git_repository* repo;
+    PyObject *index;  /* It will be None for a bare repository */
+    PyObject *config; /* It will be None for a bare repository */
+    int owned;    /* _from_c() sometimes means we don't own the C pointer */
+} CRepository;
+
+
+int clone_object(PyObject* source_repo_object, PyObject* target_repo_object, const char* hex) {
+    git_odb* source_odb;
+    git_odb* target_odb;
+    git_repository* source_repo = ((CRepository*) source_repo_object)->repo;
+    git_repository* target_repo = ((CRepository*) target_repo_object)->repo;
+    int error = git_repository_odb(&source_odb, source_repo);
+    if (error < 0) {
+        return error;
+    }
+    error = git_repository_odb(&target_odb, target_repo);
+    if (error < 0) {
+        return error;
+    }
+    git_oid oid;
+
+    error = git_oid_fromstrp(&oid, hex);
+    // This is should be a null ended string Cython will convert to this from python unicode string.
+    if (error < 0) {
+        return error;
+    }
+
+    git_odb_object* object;
+
+
+    // Read the object from the current db
+    error = git_odb_read(&object, source_odb, &oid);
+    if (error < 0) {
+        return error;
+    }
+
+    const void* data = git_odb_object_data(object);
+
+    size_t size = git_odb_object_size(object);
+
+    git_otype type = git_odb_object_type(object);
+
+    git_oid new_oid;
+
+    error = git_odb_write(&new_oid, target_odb, data, size, type);
+    if (error < 0) {
+        return error;
+    }
+
+    if (memcmp(new_oid.id, oid.id, 20 * sizeof(char)) != 0) {
+        return -1;
+    }
+
+
+    if (git_odb_exists(target_odb, &oid) != 1) {
+        return -1;
+    }
+
+    git_odb_object_free(object);
+    return 0;
+}
