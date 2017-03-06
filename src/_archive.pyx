@@ -1,9 +1,6 @@
 from collections import OrderedDict
 
-import _cffi_backend
-
 import _pygit2
-from pygit2 import ffi
 from typing import List
 from cpython.ref cimport PyObject
 
