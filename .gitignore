@@ -278,3 +278,4 @@ fabric.properties
 /src/_archive.c
 */cmake-build-debug
 tests/data
+/data
