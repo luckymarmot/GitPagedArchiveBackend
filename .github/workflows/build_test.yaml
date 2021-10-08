@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
+        submodules: true
       - name: Build Docker
         run: docker build . -t paged_archive
       - name: Run Tests
