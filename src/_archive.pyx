@@ -100,7 +100,7 @@ cdef class ArchiveFiles:
                 files.append(file.filename)
         return files
 
-    def to_dict(self):
+    def to_dict(self) -> OrderedDict:
         files = OrderedDict()
         cdef bytes py_string
         cdef ArchiveSaveFile file
@@ -149,7 +149,7 @@ cdef extern from 'Archive.h':
 
 cdef class PagedArchive:
     cdef Archive archive
-    def __init__(self, str root_file_path: str, list pages: str) -> None:
+    def __init__(self, str root_file_path: str, list pages) -> None:
         """
         Create an archive
         
@@ -181,7 +181,7 @@ cdef class PagedArchive:
             Archive_add_page_by_name(archive=&self.archive, filename=file_path)
         )
 
-    def save(self) -> dict:
+    def save(self) -> OrderedDict:
         """
         Save any changes to disk and return a dict mapping layer name to bool
         of indicating if there were changes to save.

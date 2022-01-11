@@ -1,3 +1,3 @@
 [submodule "src/ArchiveLib"]
 	path = src/ArchiveLib
-	url = git://github.com/luckymarmot/ArchiveLib.git
+	url = https://github.com/luckymarmot/ArchiveLib.git

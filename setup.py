@@ -28,7 +28,7 @@ def ext_modules():
 
     extensions = [ex_archive, ]
 
-    return cythonize(extensions)
+    return cythonize(extensions, compiler_directives={'language_level' : "3"})
 
 
 class lazy_cythonize(list):
@@ -58,10 +58,10 @@ setup(
 
     setup_requires=[
         'pygit2==0.25.0',
-        'Cython==0.25.2'],
+        'Cython==0.29.24'],
     install_requires=[
         'pygit2==0.25.0',
-        'Cython==0.25.2'
+        'Cython==0.29.24'
     ],
     version='0.0.dev11',
     url='https://github.com/luckymarmot/GitPagedArchiveBackend',
