@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-import _pygit2
+import pygit2._pygit2 as _pygit2
 from typing import List
 from cpython.ref cimport PyObject
 
@@ -48,7 +48,8 @@ def raise_on_error(Errors error):
         return
     if error == E_SYSTEM_ERROR_ERRNO:
         PyErr_SetFromErrno(PyExc_IOError)
-        return None
+        return
+        #raise Exception("Error -1")
 
     if error == E_INDEX_MAX_SIZE_EXCEEDED:
         raise ArchiveLibIndexMaxSizeOverflowException()
@@ -67,6 +68,8 @@ def raise_on_error(Errors error):
 
     if error == E_INVALID_ARCHIVE_HEADER:
         raise ArchiveLibInvalidArchiveHeaderError()
+    if error < 0:
+        raise Exception(f"Unknown Git Error code {error}")
 
 
 cdef extern from 'ArchiveSaveResult.h':
@@ -347,16 +350,20 @@ class _Backend:
         cdef int err = git_repository_open(&repository, path)
         if err < 0:
             git_repository_free(repository)
-            raise Exception("could not open the repo error {}".format(err))
+            git_error_to_py(err)
+            return
+            # raise Exception(f"could not open the repo {path} with error {err}")
 
         err = attach_archive_to_repo(repository, &archive.archive)
 
         if err < 0:
             git_repository_free(repository)
-            raise Exception("could not open the repo error {}".format(err))
+            raise Exception(f"could not attach archive to repo {path} error {err}")
 
+        cdef const char* capsule_name = "backend"
         return PyCapsule_New(
-            <void*> repository, "backend", <PyCapsule_Destructor>del_Backend)
+            <void*> repository, capsule_name, <PyCapsule_Destructor>del_Backend
+        )
 
 
 
@@ -376,7 +383,7 @@ class ArchiveRepository(BaseRepository):
         self.__archive = archive
         self.__repo_path = repo_path
         self.__backend = _Backend(self.__archive, repo_path)
-        super().__init__(backend=self.__backend.backend, *args, **kwargs)
+        super().__init__(self.__backend.backend)
 
     @classmethod
     def from_path(cls,
@@ -440,6 +447,10 @@ cdef extern from 'git2/errors.h':
 
         GIT_PASSTHROUGH     = -30#,	/**< Internal only */
         GIT_ITEROVER        = -31#,	/**< Signals end of iteration with iterator */
+    ctypedef struct git_error:
+        char * message
+        int  klass
+    const git_error * git_error_last()
 
 
 def git_error_to_py(git_error_code error):
@@ -447,13 +458,21 @@ def git_error_to_py(git_error_code error):
         return None
 
     if error == git_error_code.GIT_ERROR:
+        git_error_value = git_error_last()
+        if git_error_value != NULL:
+            raise _pygit2.GitError(f"Git error {error} {git_error_value.message.decode('UTF-8')}")
+
         PyErr_SetFromErrno(PyExc_IOError)
         return None
 
     if error == git_error_code.GIT_ENOTFOUND:
         raise KeyError()
 
-    raise _pygit2.GitError()
+    git_error_value = git_error_last()
+    if git_error_value != NULL:
+        raise _pygit2.GitError(f"Git error {error} {git_error_value.message.decode('UTF-8')}")
+
+    raise _pygit2.GitError(f"Unknown error {git_error_code}")
 
 
 
@@ -480,3 +499,10 @@ cpdef clone_repo_object(source_repo: BaseRepository,
     )
 
     git_error_to_py(error)
+
+cdef extern from 'git2/global.h':
+    int git_libgit2_init()
+
+
+def init_libgit2() -> int:
+    return git_libgit2_init()

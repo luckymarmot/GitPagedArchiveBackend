@@ -1,10 +1,10 @@
-import _pygit2
+import pygit2._pygit2 as _pygit2
 import os
 import shutil
 import uuid
 from unittest import TestCase
 
-from paged_archive._archive import ArchiveRepository, clone_repo_object
+from paged_archive._archive import ArchiveRepository, clone_repo_object, init_libgit2
 from pygit2 import GIT_FILEMODE_BLOB, init_repository, Signature
 
 
@@ -22,6 +22,7 @@ class TestInit(TestCase):
             os.path.join(os.path.abspath('./data/'), 'repo'),
             bare=True
         )
+        init_libgit2()
 
     def tearDown(self):
         try:
@@ -31,7 +32,7 @@ class TestInit(TestCase):
 
     def test_init(self):
         repo = ArchiveRepository.from_path(
-            self._repo_path, self._data_path,
+            f"{self._repo_path}/", self._data_path,
             []
         )
 
@@ -188,3 +189,6 @@ class TestInit(TestCase):
             )
         with self.assertRaises(KeyError):
             target_repo[blob.hex]
+
+
+

@@ -1,2 +1,2 @@
-git+https://github.com/libgit2/pygit2.git@master
-Cython==0.25.2
+Cython==0.29.28
+pygit2==1.8.0

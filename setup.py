@@ -7,7 +7,10 @@ def ext_modules():
     from Cython.Distutils import Extension
     from pygit2._build import get_libgit2_paths
 
-    libgit2_bin, libgit2_include, libgit2_lib = get_libgit2_paths()
+    # libgit2_bin, libgit2_include, libgit2_lib = get_libgit2_paths()
+    libgit2_bin, libig_options = get_libgit2_paths()
+
+    print(get_libgit2_paths())
 
     ex_archive = Extension(
         'paged_archive._archive',
@@ -20,9 +23,9 @@ def ext_modules():
             './src/ArchiveLib/archive/HashIndexPack.c'
         ],
         cython_c_in_temp=True,
-        libraries=['git2', 'uuid'],
-        include_dirs=[libgit2_include, './src/ArchiveLib/archive'],
-        library_dirs=[libgit2_lib],
+        libraries=libig_options['libraries'] + ['uuid'],
+        include_dirs=libig_options['include_dirs'] + ['./src/ArchiveLib/archive'],
+        library_dirs=libig_options['library_dirs'],
         extra_compile_args=['-std=c11'],
     )
 
@@ -34,6 +37,7 @@ def ext_modules():
 class lazy_cythonize(list):
     def __init__(self, callback):
         self._list, self.callback = None, callback
+        super(lazy_cythonize, self).__init__()
 
     def c_list(self):
         if self._list is None: self._list = self.callback()
@@ -57,11 +61,12 @@ setup(
     ],
 
     setup_requires=[
-        'pygit2==0.25.0',
-        'Cython==0.29.24'],
+        'pygit2==1.8.0',
+        'Cython==0.29.28']
+    ,
     install_requires=[
-        'pygit2==0.25.0',
-        'Cython==0.29.24'
+        'pygit2==1.8.0',
+        'Cython==0.29.28'
     ],
     version='0.0.dev11',
     url='https://github.com/luckymarmot/GitPagedArchiveBackend',
