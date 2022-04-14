@@ -7,10 +7,7 @@ def ext_modules():
     from Cython.Distutils import Extension
     from pygit2._build import get_libgit2_paths
 
-    # libgit2_bin, libgit2_include, libgit2_lib = get_libgit2_paths()
     libgit2_bin, libig_options = get_libgit2_paths()
-
-    print(get_libgit2_paths())
 
     ex_archive = Extension(
         'paged_archive._archive',
@@ -61,11 +58,11 @@ setup(
     ],
 
     setup_requires=[
-        'pygit2==1.8.0',
+        'pygit2==1.9.1',
         'Cython==0.29.28']
     ,
     install_requires=[
-        'pygit2==1.8.0',
+        'pygit2==1.9.1',
         'Cython==0.29.28'
     ],
     version='0.0.dev11',
@@ -84,7 +81,7 @@ setup(
 
         'License :: OSI Approved :: MIT License',
 
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.10.1',
     ],
     keywords='git',
 

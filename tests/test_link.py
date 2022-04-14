@@ -189,6 +189,3 @@ class TestInit(TestCase):
             )
         with self.assertRaises(KeyError):
             target_repo[blob.hex]
-
-
-
